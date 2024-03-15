@@ -1,5 +1,11 @@
-export default function Home(){
-    return(
-        <div>Home page</div>
+import PageNav from "../components/PageNav.jsx";
+
+
+export default function Home() {
+    return (
+        <>
+            <PageNav/>
+            <h1>Home page</h1>
+        </>
     );
 }
