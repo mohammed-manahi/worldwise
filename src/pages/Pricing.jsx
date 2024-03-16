@@ -2,7 +2,7 @@
 import styles from "./Product.module.css";
 import PageNav from "../components/PageNav.jsx";
 
-export default function Product() {
+export default function Pricing() {
     return (
         <main className={styles.product}>
             <PageNav />
@@ -19,7 +19,7 @@ export default function Product() {
                         voluptatem iste.
                     </p>
                 </div>
-                <img src="public/img-2.jpg" alt="overview of a large city with skyscrapers" />
+                <img src="img-2.jpg" alt="overview of a large city with skyscrapers" />
             </section>
         </main>
     );
