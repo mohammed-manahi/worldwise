@@ -9,6 +9,7 @@ import Login from "./pages/Login.jsx";
 import CityList from "./components/CityList.jsx";
 import CountryList from "./components/CountryList.jsx";
 import City from "./components/City.jsx";
+import Form from "./components/Form.jsx";
 
 // Define API url
 const apiUrl = `http://localhost:9900`;
@@ -51,7 +52,8 @@ export default function App() {
                     {/* Dynamic URL route state using city id */}
                     <Route path="cities/:id" element={<City/>}/>
                     <Route path="countries" element={<CountryList cities={cities} isLoading={isLoading}/>}/>
-                    <Route path="form" element={<p>Form</p>}/>
+                    {/* Programmatic navigation */}
+                    <Route path="form" element={<Form/>}/>
                 </Route>
                 <Route path="login" element={<Login/>}/>
                 {/* Handle unmatched routes */}

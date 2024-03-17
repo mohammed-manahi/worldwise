@@ -25,7 +25,7 @@ export default function CountryList({cities, isLoading}) {
     return (
         <ul className={styles.countryList}>
             {/* eslint-disable-next-line react/prop-types */}
-            {countries.map(country => <CountryItem country={country}/>)}
+            {countries.map(country => <CountryItem country={country} key={country.id}/>)}
         </ul>
     );
 }
