@@ -47,7 +47,7 @@ export default function App() {
                 <Route path="app" element={<AppLayout/>}>
                     {/* Nested routes inside app path with default city list nested route*/}
                     {/* Navigate component to redirect to the cities path and replace current element in browser history stack */}
-                    <Route index element={<Navigate replace to="cities" />}/>\
+                    <Route index element={<Navigate replace to="cities" />}/>
                     {/* Pass the cities state to the city list component */}
                     <Route path="cities" element={<CityList cities={cities} isLoading={isLoading}/>}/>
                     {/* Dynamic URL route state using city id */}
