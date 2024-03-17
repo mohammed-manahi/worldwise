@@ -8,6 +8,7 @@ import AppLayout from "./pages/AppLayout.jsx";
 import Login from "./pages/Login.jsx";
 import CityList from "./components/CityList.jsx";
 import CountryList from "./components/CountryList.jsx";
+import City from "./components/City.jsx";
 
 // Define API url
 const apiUrl = `http://localhost:9900`;
@@ -31,6 +32,7 @@ export default function App() {
                 setIsLoading(false);
             }
         }
+
         fetchCities();
     }, []);
 
@@ -46,6 +48,8 @@ export default function App() {
                     {/* Pass the cities state to the city list component */}
                     <Route index element={<CityList cities={cities} isLoading={isLoading}/>}/>
                     <Route path="cities" element={<CityList cities={cities} isLoading={isLoading}/>}/>
+                    {/* Dynamic URL route state using city id */}
+                    <Route path="cities/:id" element={<City/>}/>
                     <Route path="countries" element={<CountryList cities={cities} isLoading={isLoading}/>}/>
                     <Route path="form" element={<p>Form</p>}/>
                 </Route>

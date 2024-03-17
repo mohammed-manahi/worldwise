@@ -1,9 +1,10 @@
 import styles from "./CityItem.module.css"
+import {Link} from "react-router-dom";
 // eslint-disable-next-line react/prop-types
 export default function CityItem({city}) {
     // Destructure city object
     // eslint-disable-next-line react/prop-types
-    const { cityName, country, emoji, date, notes, position, id } = city;
+    const {cityName, country, emoji, date, notes, position, id} = city;
 
     // Date format function
     const formatDate = (date) =>
@@ -14,11 +15,14 @@ export default function CityItem({city}) {
         }).format(new Date(date));
 
     return (
-        <li className={styles.cityItem}>
-            <span className={styles.emoji}>{emoji}</span>
-            <h3 className={styles.name}>{cityName}</h3>
-            <time className={styles.date}>{formatDate(date)}</time>
-            <button className={styles.deleteBtn}>&times;</button>
+        <li>
+            {/* Link to city details using city route */}
+            <Link className={styles.cityItem} to={`${id}`}>
+                <span className={styles.emoji}>{emoji}</span>
+                <h3 className={styles.name}>{cityName}</h3>
+                <time className={styles.date}>{formatDate(date)}</time>
+                <button className={styles.deleteBtn}>&times;</button>
+            </Link>
         </li>
     );
 }
