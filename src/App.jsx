@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import Product from "./pages/Product.jsx";
 import Pricing from "./pages/Pricing.jsx";
 import Home from "./pages/Home.jsx";
@@ -46,8 +46,9 @@ export default function App() {
                 <Route path="pricing" element={<Pricing/>}/>
                 <Route path="app" element={<AppLayout/>}>
                     {/* Nested routes inside app path with default city list nested route*/}
+                    {/* Navigate component to redirect to the cities path and replace current element in browser history stack */}
+                    <Route index element={<Navigate replace to="cities" />}/>\
                     {/* Pass the cities state to the city list component */}
-                    <Route index element={<CityList cities={cities} isLoading={isLoading}/>}/>
                     <Route path="cities" element={<CityList cities={cities} isLoading={isLoading}/>}/>
                     {/* Dynamic URL route state using city id */}
                     <Route path="cities/:id" element={<City/>}/>
