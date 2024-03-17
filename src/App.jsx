@@ -1,3 +1,4 @@
+import {useEffect, useState} from "react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Product from "./pages/Product.jsx";
 import Pricing from "./pages/Pricing.jsx";
@@ -6,7 +7,7 @@ import PageNotFound from "./pages/PageNotFound.jsx";
 import AppLayout from "./pages/AppLayout.jsx";
 import Login from "./pages/Login.jsx";
 import CityList from "./components/CityList.jsx";
-import {useEffect, useState} from "react";
+import CountryList from "./components/CountryList.jsx";
 
 // Define API url
 const apiUrl = `http://localhost:9900`;
@@ -45,7 +46,7 @@ export default function App() {
                     {/* Pass the cities state to the city list component */}
                     <Route index element={<CityList cities={cities} isLoading={isLoading}/>}/>
                     <Route path="cities" element={<CityList cities={cities} isLoading={isLoading}/>}/>
-                    <Route path="countries" element={<p>Countries</p>}/>
+                    <Route path="countries" element={<CountryList cities={cities} isLoading={isLoading}/>}/>
                     <Route path="form" element={<p>Form</p>}/>
                 </Route>
                 <Route path="login" element={<Login/>}/>
