@@ -2,9 +2,11 @@ import styles from "./CountryList.module.css"
 import Spinner from "./Spinner.jsx";
 import Message from "./Message.jsx";
 import CountryItem from "./CountryItem.jsx";
+import {useCities} from "../contexts/CitiesContext.jsx";
 
 // eslint-disable-next-line react/prop-types
-export default function CountryList({cities, isLoading}) {
+export default function CountryList() {
+    const {cities, isLoading} = useCities();
     if (isLoading) return <Spinner/>;
     // eslint-disable-next-line react/prop-types
     // Handle no city list data
