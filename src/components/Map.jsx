@@ -2,10 +2,13 @@ import styles from "./Map.module.css"
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import {useState} from "react";
+import {useCities} from "../contexts/CitiesContext.jsx";
 
 export default function Map() {
     // The useNavigate hook is provided by React Router to navigate to a new URL without click
     const navigate = useNavigate();
+    // Get the global state of cities from the context
+    const {cities} = useCities();
     // Define a state to manage map poisiton
     const [mapPosition, setMapPosition] = useState([40, 0]);
     // Extract the query string using searchParams
@@ -23,11 +26,13 @@ export default function Map() {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
                 />
-                <Marker position={mapPosition}>
+                {/* Loop over cities to annotate the marker */}
+                {cities.map((city) => (<Marker position={[city.position.lat, city.position.lng]} key={city.id}>
                     <Popup>
-                        A pretty CSS3 popup. <br/> Easily customizable.
+                        <span>{city.emoji}</span>
+                        <span>{city.cityName}</span>
                     </Popup>
-                </Marker>
+                </Marker>))}
             </MapContainer>
         </div>
     );
