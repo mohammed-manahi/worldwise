@@ -1,5 +1,6 @@
 import styles from "./CityItem.module.css"
 import {Link} from "react-router-dom";
+import {useCities} from "../contexts/CitiesContext.jsx";
 // eslint-disable-next-line react/prop-types
 export default function CityItem({city}) {
     // Destructure city object
@@ -14,11 +15,15 @@ export default function CityItem({city}) {
             year: "numeric",
         }).format(new Date(date));
 
+    // When the current city id equals city id add active style to the city item
+    const {currentCity} = useCities();
+
     return (
         <li>
             {/* Link to city details using city route */}
             {/* pass the id as the parameter */}
-            <Link className={styles.cityItem} to={`${id}?lat=${position.lat}&lng=${position.lng}`}>
+            <Link className={`${styles.cityItem} ${id === currentCity.id ? styles["cityItem--active"] : ""}`}
+                  to={`${id}?lat=${position.lat}&lng=${position.lng}`}>
                 <span className={styles.emoji}>{emoji}</span>
                 <h3 className={styles.name}>{cityName}</h3>
                 <time className={styles.date}>{formatDate(date)}</time>

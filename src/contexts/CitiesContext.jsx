@@ -13,6 +13,10 @@ function CitiesProvider({children}) {
     const [cities, setCities] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    // Get city data using another http request and place in the context because it is needed in multiple components
+    // If the current city is needed in one component only, it should be placed in the city component
+    const [currentCity, setCurrentCity] = useState({});
+
     // Define and effect to fetch data
     useEffect(() => {
         async function fetchCities() {
@@ -30,9 +34,24 @@ function CitiesProvider({children}) {
 
         fetchCities();
     }, []);
+
+    async function getCity(id) {
+        // Fetch current city data
+        try {
+            setIsLoading(true);
+            const response = await fetch(`${apiUrl}/cities/${id}`);
+            const data = await response.json();
+            setCurrentCity(data);
+        } catch {
+            alert("There was an error while fetching the data!")
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     return (
         // Step 2: use the context to wrap needed jsx content
-        <CitiesContext.Provider value={{cities: cities, isLoading: isLoading}}>
+        <CitiesContext.Provider value={{cities: cities, isLoading: isLoading, currentCity: currentCity, getCity: getCity}}>
             {children}
         </CitiesContext.Provider>
     );
