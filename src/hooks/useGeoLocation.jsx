@@ -1,7 +1,6 @@
-import {useState} from "react";
+import { useState } from "react";
 
-export function useGeolocation({defaultPosition = null}) {
-    // Custom hook to get geo position and receives a default location
+export function useGeolocation(defaultPosition = null) {
     const [isLoading, setIsLoading] = useState(false);
     const [position, setPosition] = useState(defaultPosition);
     const [error, setError] = useState(null);
@@ -15,7 +14,7 @@ export function useGeolocation({defaultPosition = null}) {
             (pos) => {
                 setPosition({
                     lat: pos.coords.latitude,
-                    lng: pos.coords.longitude
+                    lng: pos.coords.longitude,
                 });
                 setIsLoading(false);
             },

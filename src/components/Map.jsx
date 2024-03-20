@@ -3,8 +3,9 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import {MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from "react-leaflet";
 import {useEffect, useState} from "react";
 import {useCities} from "../contexts/CitiesContext.jsx";
-import {useGeolocation} from "../hooks/useGeoLocation.js";
+import {useGeolocation} from "../hooks/useGeoLocation.jsx";
 import Button from "./Button.jsx";
+import {useUrlPosition} from "../hooks/useUrlPosition.jsx";
 
 export default function Map() {
     // Get the global state of cities from the context
@@ -13,34 +14,44 @@ export default function Map() {
     // Use get geolocation custom hook to get the current user position on the map
     // Rename destructured object properties to avoid conflict
     const {isLoading: isLoadingPosition, position: geoLocationPosition, getPosition} =
-        useGeolocation({defaultPosition: null});
+        useGeolocation();
 
     // Define a state to manage map position
     const [mapPosition, setMapPosition] = useState([40, 0]);
 
-    // Extract the query string using searchParams
-    const [searchParams, setSearchParams] = useSearchParams();
-    const mapLat = searchParams.get("lat");
-    const mapLng = searchParams.get("lng");
+    // Move query string getter to a custom hook and invoke it here
+    const {mapLat, mapLng} = useUrlPosition();
 
     useEffect(function () {
         // Sync map latitude and longitude with the set map position state function
         if (mapLat && mapLng) setMapPosition([mapLat, mapLng])
     }, [mapLat, mapLng])
 
-    useEffect(function () {
-        // Sync the geo location position of the custom hook with the set map position state function
-        if (geoLocationPosition) setMapPosition([geoLocationPosition.lat, geoLocationPosition.lng]);
-    }, [geoLocationPosition])
+    // useEffect( () => {
+    //     // Sync the geo location position of the custom hook with the set map position state function
+    //     if (geoLocationPosition) setMapPosition([geoLocationPosition.lat, geoLocationPosition.lng]);
+    // }, [geoLocationPosition])
+
+    useEffect(() => {
+        // Only set map position based on geolocation if user hasn't interacted yet
+        if (geoLocationPosition && JSON.stringify(mapPosition) === JSON.stringify([40, 0])) {
+            setMapPosition([geoLocationPosition.lat, geoLocationPosition.lng]);
+        }
+
+        // Update map position based on query string parameters (optional)
+        if (mapLat && mapLng) {
+            setMapPosition([mapLat, mapLng]);
+        }
+    }, [geoLocationPosition, mapPosition, mapLat, mapLng]);
 
     return (
         // Use the navigate function of the useNavigate hook to navigate to the form
         <div className={styles.mapContainer}>
             {/* Use button component to get geo location position on click */}
-            {!geoLocationPosition ?
-                <Button type="position" onClick={getPosition}>{isLoadingPosition ? "Loading..." : "Use your position"}</Button>
-                : ""}
-            < MapContainer center={mapPosition} zoom={8} scrollWheelZoom={true} className={styles.map}>
+            {!geoLocationPosition &&
+                (<Button type="position" onClick={getPosition}>{isLoadingPosition ? "Loading..." : "Use your position"}</Button>)
+            }
+            <MapContainer center={mapPosition} zoom={8} scrollWheelZoom={true} className={styles.map}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
@@ -54,11 +65,9 @@ export default function Map() {
                     </Marker>)
                 )
                 }
-                {/* Use change center component to manage map position */
-                }
+                {/* Use change center component to manage map position */}
                 <ChangeCenter position={mapPosition}/>
-                {/* Use detect click component to navigate current position click to the form  */
-                }
+                {/* Use detect click component to navigate current position click to the form  */}
                 <DetectClick/>
             </MapContainer>
         </div>
@@ -86,5 +95,5 @@ function DetectClick() {
             // Add lat and lng positions for navigating to the form with a query string values
             navigate(`form?lat=${e.latlng.lat}&lng=${e.latlng.lng}`);
         }
-    })
+    });
 }
