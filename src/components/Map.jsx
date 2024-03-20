@@ -1,99 +1,93 @@
-import styles from "./Map.module.css"
 import {useNavigate, useSearchParams} from "react-router-dom";
-import {MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from "react-leaflet";
+import {
+    MapContainer,
+    TileLayer,
+    Marker,
+    Popup,
+    useMap,
+    useMapEvents,
+} from "react-leaflet";
+
+import styles from "./Map.module.css";
 import {useEffect, useState} from "react";
-import {useCities} from "../contexts/CitiesContext.jsx";
-import {useGeolocation} from "../hooks/useGeoLocation.jsx";
-import Button from "./Button.jsx";
-import {useUrlPosition} from "../hooks/useUrlPosition.jsx";
+import {useCities} from "../contexts/CitiesContext";
+import {useGeolocation} from "../hooks/useGeolocation";
+import {useUrlPosition} from "../hooks/useUrlPosition";
+import Button from "./Button";
 
-export default function Map() {
-    // Get the global state of cities from the context
+function Map() {
     const {cities} = useCities();
-
-    // Use get geolocation custom hook to get the current user position on the map
-    // Rename destructured object properties to avoid conflict
-    const {isLoading: isLoadingPosition, position: geoLocationPosition, getPosition} =
-        useGeolocation();
-
-    // Define a state to manage map position
     const [mapPosition, setMapPosition] = useState([40, 0]);
+    const {
+        isLoading: isLoadingPosition,
+        position: geolocationPosition,
+        getPosition,
+    } = useGeolocation();
+    const [mapLat, mapLng] = useUrlPosition();
 
-    // Move query string getter to a custom hook and invoke it here
-    const {mapLat, mapLng} = useUrlPosition();
+    useEffect(
+        function () {
+            if (mapLat && mapLng) setMapPosition([mapLat, mapLng]);
+        },
+        [mapLat, mapLng]
+    );
 
-    useEffect(function () {
-        // Sync map latitude and longitude with the set map position state function
-        if (mapLat && mapLng) setMapPosition([mapLat, mapLng])
-    }, [mapLat, mapLng])
-
-    // useEffect( () => {
-    //     // Sync the geo location position of the custom hook with the set map position state function
-    //     if (geoLocationPosition) setMapPosition([geoLocationPosition.lat, geoLocationPosition.lng]);
-    // }, [geoLocationPosition])
-
-    useEffect(() => {
-        // Only set map position based on geolocation if user hasn't interacted yet
-        if (geoLocationPosition && JSON.stringify(mapPosition) === JSON.stringify([40, 0])) {
-            setMapPosition([geoLocationPosition.lat, geoLocationPosition.lng]);
-        }
-
-        // Update map position based on query string parameters (optional)
-        if (mapLat && mapLng) {
-            setMapPosition([mapLat, mapLng]);
-        }
-    }, [geoLocationPosition, mapPosition, mapLat, mapLng]);
+    useEffect(
+        function () {
+            if (geolocationPosition)
+                setMapPosition([geolocationPosition.lat, geolocationPosition.lng]);
+        },
+        [geolocationPosition]
+    );
 
     return (
-        // Use the navigate function of the useNavigate hook to navigate to the form
         <div className={styles.mapContainer}>
-            {/* Use button component to get geo location position on click */}
-            {!geoLocationPosition &&
-                (<Button type="position" onClick={getPosition}>{isLoadingPosition ? "Loading..." : "Use your position"}</Button>)
-            }
-            <MapContainer center={mapPosition} zoom={8} scrollWheelZoom={true} className={styles.map}>
+            {!geolocationPosition && (
+                <Button type="position" onClick={getPosition}>
+                    {isLoadingPosition ? "Loading..." : "Use your position"}
+                </Button>
+            )}
+
+            <MapContainer
+                center={mapPosition}
+                zoom={6}
+                scrollWheelZoom={true}
+                className={styles.map}
+            >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
                 />
-                {/* Loop over cities to annotate the marker */}
-                {cities.map((city) => (<Marker position={[city.position.lat, city.position.lng]} key={city.id}>
+                {cities.map((city) => (
+                    <Marker
+                        position={[city.position.lat, city.position.lng]}
+                        key={city.id}
+                    >
                         <Popup>
-                            <span>{city.emoji}</span>
-                            <span>{city.cityName}</span>
+                            <span>{city.emoji}</span> <span>{city.cityName}</span>
                         </Popup>
-                    </Marker>)
-                )
-                }
-                {/* Use change center component to manage map position */}
+                    </Marker>
+                ))}
+
                 <ChangeCenter position={mapPosition}/>
-                {/* Use detect click component to navigate current position click to the form  */}
                 <DetectClick/>
             </MapContainer>
         </div>
-    )
-        ;
+    );
 }
 
-// eslint-disable-next-line react/prop-types
 function ChangeCenter({position}) {
-    // A component function to change the map center (lat, lng) coordination
-    // Leaflet provides a custom hook to manage map
     const map = useMap();
     map.setView(position);
     return null;
 }
 
 function DetectClick() {
-    // A component to detect user click on the map
-    // The useNavigate hook is provided by React Router to navigate to a new URL without click
     const navigate = useNavigate();
-    // Leaflet provides a custom hook to manage map click event
+
     useMapEvents({
-        click: (e) => {
-            console.log(e);
-            // Add lat and lng positions for navigating to the form with a query string values
-            navigate(`form?lat=${e.latlng.lat}&lng=${e.latlng.lng}`);
-        }
+        click: (e) => navigate(`form?lat=${e.latlng.lat}&lng=${e.latlng.lng}`),
     });
 }
+
+export default Map;
