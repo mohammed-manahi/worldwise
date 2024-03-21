@@ -49,9 +49,33 @@ function CitiesProvider({children}) {
         }
     }
 
+    async function createCity(newCity) {
+        // Create a new city
+        try {
+            setIsLoading(true);
+            // Post the new city to the api
+            const response = await fetch(`${apiUrl}/cities`, {
+                method: "POST",
+                body: JSON.stringify(newCity),
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+            const data = await response.json();
+            console.log(data);
+            // Add the new city to the state
+            setCities(cities => [...cities, data])
+        } catch {
+            alert("There was an error while fetching the data!")
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     return (
         // Step 2: use the context to wrap needed jsx content
-        <CitiesContext.Provider value={{cities: cities, isLoading: isLoading, currentCity: currentCity, getCity: getCity}}>
+        <CitiesContext.Provider
+            value={{cities: cities, isLoading: isLoading, currentCity: currentCity, getCity: getCity, createCity: createCity}}>
             {children}
         </CitiesContext.Provider>
     );
