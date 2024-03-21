@@ -16,8 +16,16 @@ export default function CityItem({city}) {
         }).format(new Date(date));
 
     // When the current city id equals city id add active style to the city item
-    const {currentCity} = useCities();
+    const {currentCity, deleteCity} = useCities();
 
+    function handleDeleteClick(event){
+        // Handle delete city click event
+        // This prevents the link to be effective in the delete button
+        event.preventDefault();
+        console.log("TEST");
+        deleteCity(id)
+
+    }
     return (
         <li>
             {/* Link to city details using city route */}
@@ -27,7 +35,7 @@ export default function CityItem({city}) {
                 <span className={styles.emoji}>{emoji}</span>
                 <h3 className={styles.name}>{cityName}</h3>
                 <time className={styles.date}>{formatDate(date)}</time>
-                <button className={styles.deleteBtn}>&times;</button>
+                <button className={styles.deleteBtn} onClick={handleDeleteClick}>&times;</button>
             </Link>
         </li>
     );

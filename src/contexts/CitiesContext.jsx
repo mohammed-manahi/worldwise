@@ -1,4 +1,5 @@
 import {createContext, useContext, useEffect, useState} from "react";
+import city from "../components/City.jsx";
 
 // Step 1: create the context
 const CitiesContext = createContext();
@@ -66,7 +67,23 @@ function CitiesProvider({children}) {
             // Add the new city to the state
             setCities(cities => [...cities, data])
         } catch {
-            alert("There was an error while fetching the data!")
+            alert("There was an error while creating the data!")
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    async function deleteCity(id) {
+        // Delete a city
+        try {
+            setIsLoading(true);
+            // Post the new city to the api
+            await fetch(`${apiUrl}/cities/${id}`, {
+                method: "DELETE",
+            });
+            setCities((cities) => cities.filter((city) => city.id !== id))
+        } catch {
+            alert("There was an error while deleting the data!")
         } finally {
             setIsLoading(false);
         }
@@ -75,7 +92,14 @@ function CitiesProvider({children}) {
     return (
         // Step 2: use the context to wrap needed jsx content
         <CitiesContext.Provider
-            value={{cities: cities, isLoading: isLoading, currentCity: currentCity, getCity: getCity, createCity: createCity}}>
+            value={{
+                cities: cities,
+                isLoading: isLoading,
+                currentCity: currentCity,
+                getCity: getCity,
+                createCity: createCity,
+                deleteCity: deleteCity
+            }}>
             {children}
         </CitiesContext.Provider>
     );
