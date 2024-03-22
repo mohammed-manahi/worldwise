@@ -1,4 +1,4 @@
-import {createContext, useContext, useEffect, useReducer, useState} from "react";
+import {createContext, useCallback, useContext, useEffect, useReducer, useState} from "react";
 import city from "../components/City.jsx";
 
 // Step 1: create the context
@@ -81,7 +81,8 @@ function CitiesProvider({children}) {
         fetchCities();
     }, []);
 
-    async function getCity(id) {
+    // Apply memoization to get city to avoid infinite loop in the use effect hook in the city component
+   const getCity = useCallback(async function getCity(id) {
         // Fetch current city data if the id is different
         // The id is coming from the url params so it need to be converted to a number
         if(Number(id) === state.currentCity.id) return;
@@ -101,7 +102,7 @@ function CitiesProvider({children}) {
         // finally {
         //     setIsLoading(false);
         // }
-    }
+    }, [state.currentCity.id]);
 
     async function createCity(newCity) {
         // Create a new city

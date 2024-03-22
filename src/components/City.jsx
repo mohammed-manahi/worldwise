@@ -28,7 +28,7 @@ function City() {
         // Wrap get city function inside the useEffect hook because it fetches data from the api
         // Pass the id using the route parameters
         getCity(id);
-    }, [id]);
+    }, [getCity, id]);
 
 
     const {cityName, emoji, date, notes} = currentCity;
